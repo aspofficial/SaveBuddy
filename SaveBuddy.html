@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Game!!</title>
+    <style type="text/css">
+    body{
+        background-color: #ccc;
+    }
+    canvas{
+        margin-left:150px ;
+        margin-top: 20px;
+        cursor: ;
+        background-color: black;
+    }
+    #header{
+         margin-left:150px ;
+        margin-top: 50px;
+        background-color: #ccc;        
+    }
+    #score{
+        display: inline;
+    }
+    #displayText{
+        padding-left: 100px;
+        display: inline;
+    }
+    
+    </style>
+</head>
+<body >
+<div id="header">
+    <h1>Score: <div id="score">0</div> <div id="displayText">Press SpaceBar to start the game !!</div> </h1>
+</div>
+    
+</div>
+<canvas id="canvas" width="1600" height="800">
+   
+</canvas>
+
+<script type="text/javascript">
+    
+(function(){
+
+function init(){
+    canvas = document.createElement("canvas");  
+    canvas.height = 780;
+    canvas.width =  1580;
+    c = canvas.getContext('2d');
+
+    var isPaused = false;
+    var dot, eventDoc, doc, body, pageX, pageY , ballDx, ballDy,count=0;
+    var p = 0,q=0 ;
+
+    window.onkeydown = function() {    // To Pause the animation by clicking the mouse button...
+        
+        var x = event.which || event.keyCode;
+        console.log(x);
+        if(x==32)
+            isPaused = !isPaused; // flips the pause state     
+    };
+
+     var canvas = document.getElementsByTagName('canvas')[0];
+     var c = canvas.getContext('2d');
+
+     var container = {x:0,y:0,width:1600,height:800};
+     var circles = [{x:400,y:400,r:50,color:25,vx:6,vy:10},     // Orange
+                    {x:500,y:300,r:100,color:25,vx:5,vy:-8},   // Green
+                    {x:800,y:350,r:25,color:25,vx:20,vy:-20},  // purpel
+                    {x:800,y:700,r:75,color:25,vx:13,vy:-8},   // Pink
+                    {x:400,y:500,r:120,color:25,vx:-4,vy:-6}   // Cyan
+     ];
+     var buddy = {x:1000,y:500,r:50,color:500};    
+     var outX ,outY;  
+      outX = buddy.x;
+    outY = buddy.y;
+
+
+
+     function draw(){
+// console.log(p);
+
+
+       // for BACKGROUND 
+          
+        c.fillStyle = 'black';         
+        c.fillRect(container.x,container.y,container.width,container.height);   
+        // container.width -= 20;
+        // container.height -=10;
+
+    // Mouse coordinates finding...
+
+     document.onmousemove = handleMouseMove;
+    function handleMouseMove(event) {   
+
+      event = event || window.event; // IE-ism      
+      
+      if (event.pageX == null && event.clientX != null) {
+        eventDoc = (event.target && event.target.ownerDocument) || document;
+        doc = eventDoc.documentElement;
+        body = eventDoc.body;
+
+        event.pageX = event.clientX +
+          (doc && doc.scrollLeft || body && body.scrollLeft || 0) -
+          (doc && doc.clientLeft || body && body.clientLeft || 0);                 
+
+        event.pageY = event.clientY +
+          (doc && doc.scrollTop  || body && body.scrollTop  || 0) -
+          (doc && doc.clientTop  || body && body.clientTop  || 0 );        
+
+      }   
+       buddy.x = event.pageX -150 ;    
+       buddy.y = event.pageY - 120;
+    }
+
+       // for ENEMIES ..  
+     if (isPaused && count==0) {         // when the animation is started..        
+
+         document.getElementById("displayText").innerHTML="" ;
+        p++;    // Score Updating...
+        if(p%50 == 0){
+            q++;
+            document.getElementById("score").innerHTML=q;
+             
+        }
+
+         for(var i=0; i <circles.length; i++){    //circles.length
+            //console.log("a");
+             c.fillStyle = 'hsl(' + circles[i].color + ',100%,50%)';
+             c.beginPath();
+             c.arc(circles[i].x,circles[i].y,circles[i].r,0,2*Math.PI,false);
+             c.fill();
+
+         // for BUDDY/PLAYER  
+        c.beginPath();
+        c.arc(buddy.x,buddy.y,buddy.r,0,2*Math.PI,false);        
+        c.fillStyle="blue";
+        c.fill();     
+
+    if(buddy.x  >= circles[i].x - circles[i].r && buddy.x  <= circles[i].x + circles[i].r && buddy.y  >= circles[i].y - circles[i].r && buddy.y  <= circles[i].y + circles[i].r || (buddy.x + buddy.r > container.x + container.width) || (buddy.x - buddy.r < container.x)
+          || (buddy.y + buddy.r > container.y + container.height) || (buddy.y - buddy.r < container.y)     ) {
+                console.log("abc");          
+                // outX = buddy.x;
+                // outY = buddy.y;  
+                count=1;
+                 document.getElementById("displayText").innerHTML="Press 'F5' or 'Ctrl+r' to restart the Game again!! Hope to beat your score ;)" ;
+            
+        }
+             if((circles[i].x + circles[i].vx + circles[i].r > container.x + container.width) || (circles[i].x - circles[i].r + circles[i].vx < container.x)){
+                circles[i].vx = - circles[i].vx;
+             }
+
+             if((circles[i].y + circles[i].vy + circles[i].r > container.y + container.height) || (circles[i].y - circles[i].r + circles[i].vy < container.y)){
+                 circles[i].vy = - circles[i].vy;
+             }
+             circles[i].x +=circles[i].vx;
+             circles[i].y +=circles[i].vy;
+         }                
+    } 
+    
+    else{           // when the animation is paused...
+               
+
+
+                for(var i = 0; i < circles.length; i++){
+                    //console.log("a");
+                     c.fillStyle = 'hsl(' + circles[i].color + ',100%,50%)';
+                     c.beginPath();
+                     c.arc(circles[i].x,circles[i].y,circles[i].r,0,2*Math.PI,false);
+                     c.fill();  
+                }
+            
+
+             // for BUDDY/PLAYER  
+        c.beginPath();
+        c.arc(buddy.x,buddy.y,buddy.r,0,2*Math.PI,false);        
+        c.fillStyle="blue";
+        c.fill();
+    }    
+   
+         requestAnimationFrame(draw);
+     }
+      requestAnimationFrame(draw);
+
+      
+}
+
+//invoke function init once document is fully loaded
+window.addEventListener('load',init,false);
+
+}());  //self invoking function
+</script>
+</body>
+</html>
